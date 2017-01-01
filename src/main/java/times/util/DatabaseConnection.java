@@ -9,7 +9,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConnection {
     public static final String oracle_driver = "oracle.jdbc.OracleDriver";
-    public static final String oracle_connection = "jdbc:oraclgite:thin:@//10.60.42.202:1521/timespdb";
+    public static final String oracle_connection = "jdbc:oracle:thin:@//10.60.42.202:1521/timespdb";
 
     public static final String tt_driver = "com.timesten.jdbc.TimesTenDriver";
     public static final String tt_connection = "jdbc:timesten:direct";
