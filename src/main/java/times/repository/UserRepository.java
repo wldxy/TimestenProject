@@ -2,6 +2,7 @@ package times.repository;
 
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
+import oracle.sql.NUMBER;
 import times.model.User;
 import times.util.DatabaseConnection;
 
@@ -15,22 +16,24 @@ import java.sql.SQLException;
  */
 public class UserRepository {
 
-    private static final String createUser = "{call CREATE_USER(?, ?, ?, ?, ?)}";
+    private static final String createUser = "{call CREATE_USER(?, ?, ?, ?, ?, ?)}";
 
-    private static final String selectUserByIdentify = "{call selectUserByIdentify(?, ?)}";
+    private static final String selectUserByIdentify = "{call select_User_By_Identify(?, ?)}";
 
     private static final String selectUserById = "{call selectUserById(?, ?)}";
 
     public void save(User user) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
-        CallableStatement callableStatement = connection.prepareCall(createUser);
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(createUser);
         callableStatement.setString(1, user.name);
         callableStatement.setString(2, user.identify);
         callableStatement.setString(3, user.getGender());
         callableStatement.setString(4, user.getTelephone());
         callableStatement.setString(5, user.getTelephone());
-
+        callableStatement.registerOutParameter(6, OracleTypes.NUMBER);
         callableStatement.executeUpdate();
+        int result = callableStatement.getInt(6);
+        System.out.println(result);
         connection.close();
     }
 
@@ -38,7 +41,6 @@ public class UserRepository {
         Connection connection = DatabaseConnection.getOracleConnection();
 
         OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(selectUserByIdentify);
-
         callableStatement.setString(1, identify);
         callableStatement.registerOutParameter(2, OracleTypes.CURSOR);
 
@@ -55,7 +57,6 @@ public class UserRepository {
         user.setTelephone(rs.getString(5));
         user.setPassword(rs.getString(6));
         user.setFund(rs.getBigDecimal(7));
-
         connection.close();
         return user;
     }

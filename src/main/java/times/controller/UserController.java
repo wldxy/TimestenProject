@@ -1,8 +1,10 @@
 package times.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import times.ViewModel.LoginViewMoldel;
 import times.model.User;
 import times.repository.UserRepository;
 
@@ -17,15 +19,19 @@ public class UserController {
 
     UserRepository userRepository = new UserRepository();
 
-    @RequestMapping("/login")
-    public Long login(@RequestParam(name = "identity") String identity,
-                      @RequestParam(name = "password") String password) throws SQLException {
+    @RequestMapping(value = "/login",method = RequestMethod.POST)
+    public LoginViewMoldel login(@RequestParam(name = "id") String identity,
+                      @RequestParam(name = "pwd") String password) throws SQLException {
         User user = userRepository.findByIdentify(identity);
-        if (user.password == password) {
-            return user.id;
+        String userPassWord = user.password.toString().trim();
+        LoginViewMoldel loginViewMoldel = new LoginViewMoldel();
+        if (userPassWord.equals(password)) {
+            loginViewMoldel.setFlag("true");
+            loginViewMoldel.setId(user.getId().toString());
         } else {
-            return (long) -1;
+            loginViewMoldel.setFlag("false");
         }
+        return loginViewMoldel;
     }
 
     @RequestMapping("/add")
@@ -39,7 +45,6 @@ public class UserController {
         user.setIdentify(identify);
         user.setPassword(password);
         user.setTelephone("");
-
         userRepository.save(user);
     }
 }
