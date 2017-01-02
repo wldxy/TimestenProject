@@ -3,6 +3,7 @@ package times.repository;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.NUMBER;
+import times.ViewModel.FutureDescriptionViewModel;
 import times.model.User;
 import times.util.DatabaseConnection;
 
@@ -10,6 +11,7 @@ import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * Created by ocean on 16-12-31.
@@ -20,7 +22,9 @@ public class UserRepository {
 
     private static final String selectUserByIdentify = "{call select_User_By_Identify(?, ?)}";
 
-    private static final String selectUserById = "{call selectUserById(?, ?)}";
+    private static final String selectUserById = "{call select_User_By_Id(?, ?)}";
+
+    private static final String selectUserFutures = "{call select_future_by_user_id(?, ?)}";
 
     public void save(User user) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
@@ -64,16 +68,46 @@ public class UserRepository {
     public User findById(Long id) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
 
-        CallableStatement callableStatement = connection.prepareCall(selectUserById);
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(selectUserById);
 
         callableStatement.setLong(1, id);
+        callableStatement.registerOutParameter(2, OracleTypes.CURSOR);
 
         callableStatement.executeUpdate();
 
+        ResultSet rs = callableStatement.getCursor(2);
+        rs.next();
+
         User user = new User();
-
+        user.setId(rs.getLong(1));
+        user.setName(rs.getString(2));
+        user.setIdentify(rs.getString(3));
+        user.setGender(rs.getString(4));
+        user.setTelephone(rs.getString(5));
+        user.setPassword(rs.getString(6));
+        user.setFund(rs.getBigDecimal(7));
         connection.close();
-
         return user;
+    }
+
+    public ArrayList<FutureDescriptionViewModel> findUserFuture(Long userId) throws SQLException {
+        Connection connection = DatabaseConnection.getOracleConnection();
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(selectUserFutures);
+        callableStatement.setLong(1, userId);
+        callableStatement.registerOutParameter(2, OracleTypes.CURSOR);
+        callableStatement.executeUpdate();
+        ResultSet rs = callableStatement.getCursor(2);
+        ArrayList<FutureDescriptionViewModel> userFutures = new ArrayList<FutureDescriptionViewModel>();
+
+        FutureDescriptionViewModel futureDescriptionViewModel  = new FutureDescriptionViewModel();
+        while (rs.next()){
+            Long future_id = rs.getLong(1);
+            String future_name = rs.getString(2);
+            futureDescriptionViewModel.setFuture_id(future_id);
+            futureDescriptionViewModel.setFuture_name(future_name);
+            userFutures.add(futureDescriptionViewModel);
+        }
+        connection.close();
+        return userFutures;
     }
 }
