@@ -38,17 +38,28 @@ public class UserController {
     }
 
     @RequestMapping("/add")
-    public void add(@RequestParam(name = "identify") String identify,
+    public boolean add(@RequestParam(name = "identify") String identify,
                     @RequestParam(name = "password") String password,
-                    @RequestParam(name = "sex") String sex,
-                    @RequestParam(name = "name") String name) throws SQLException {
+                    @RequestParam(name = "sex") Boolean sex,
+                    @RequestParam(name = "name") String name,
+                    @RequestParam(name = "tel") String tel) throws SQLException {
         User user = new User();
         user.setName(name);
-        user.setGender(sex);
+        String str = "男";
+        if (sex) {
+            str = "女";
+        }
+        user.setGender(str);
         user.setIdentify(identify);
         user.setPassword(password);
-        user.setTelephone("");
-        userRepository.save(user);
+        user.setTelephone(tel);
+        try {
+            System.out.println(userRepository.save(user));
+            return true;
+        }
+        catch (Exception e){
+            return false;
+        }
     }
 
 
@@ -57,9 +68,8 @@ public class UserController {
         Long userId = Long.parseLong(user_id);
         User user = userRepository.findById(userId);
 
-        ProfileViewModel profileViewModel= userRepository.contractInfor(userId);
+        ProfileViewModel profileViewModel = userRepository.contractInfor(userId);
         profileViewModel.setName(user.getName());
-        profileViewModel.setCount_id(user_id);
         profileViewModel.setLeft_money(user.getFund());
         return profileViewModel;
     }

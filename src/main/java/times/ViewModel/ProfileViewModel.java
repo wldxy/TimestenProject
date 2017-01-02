@@ -13,6 +13,25 @@ public class ProfileViewModel {
     private float bonus;
     private BigDecimal amount;
     private BigDecimal left_money;
+    private boolean sex;
+    private String tel;
+
+    public boolean isSex() {
+        return sex;
+    }
+
+    public void setSex(boolean sex) {
+        this.sex = sex;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
     public ProfileViewModel(Long id, String name, String count_id, float bonus, BigDecimal amount, BigDecimal left_money, ArrayList<FutureDescriptionViewModel> my_future) {
         this.id = id;
         this.name = name;

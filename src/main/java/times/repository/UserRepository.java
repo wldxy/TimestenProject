@@ -37,18 +37,19 @@ public class UserRepository {
 
     private static final String decUserAcount = "{call TRANSFER(?, ?, ?)}";
 
-    public void save(User user) throws SQLException {
+    public int save(User user) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
         OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(createUser);
         callableStatement.setString(1, user.name);
         callableStatement.setString(2, user.identify);
         callableStatement.setString(3, user.getGender());
         callableStatement.setString(4, user.getTelephone());
-        callableStatement.setString(5, user.getTelephone());
+        callableStatement.setString(5, user.getPassword());
         callableStatement.registerOutParameter(6, OracleTypes.NUMBER);
         callableStatement.executeUpdate();
         int result = callableStatement.getInt(6);
         connection.close();
+        return result;
     }
 
 //    public ProfileViewModel contractInfor(Long user_id) throws SQLException {
@@ -61,6 +62,17 @@ public class UserRepository {
 //    }
     public ProfileViewModel contractInfor(Long user_id) throws SQLException {
         ProfileViewModel profileViewModel = new ProfileViewModel();
+        profileViewModel.setId(user_id);
+        User user = findById(user_id);
+        profileViewModel.setLeft_money(user.getFund());
+        profileViewModel.setCount_id(user.getIdentify());
+        if(user.getGender().trim().equals("女")){
+            profileViewModel.setSex(false);
+        }
+        else{
+            profileViewModel.setSex(true);
+        }
+        profileViewModel.setTel(user.getTelephone());
         Connection connection = DatabaseConnection.getOracleConnection();
         OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(SELECT_USER_CONTRACT_INFOR);
         callableStatement.setLong(1, user_id);
@@ -74,6 +86,9 @@ public class UserRepository {
         ResultSet rs = callableStatement.getCursor(4);
 
         ArrayList<FutureDescriptionViewModel> futureDescriptionViewModels = new ArrayList<FutureDescriptionViewModel>();
+        if(rs==null){
+            return profileViewModel;
+        }
         while (rs.next()) {
             FutureDescriptionViewModel futureDescriptionViewModel = new FutureDescriptionViewModel();
             Long futureId = rs.getLong(1);
@@ -89,6 +104,7 @@ public class UserRepository {
         BigDecimal bigDecimal = new BigDecimal(anount);
         profileViewModel.setAmount(bigDecimal);
         profileViewModel.setMy_future(futureDescriptionViewModels);
+
         return profileViewModel;
     }
 
