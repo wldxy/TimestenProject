@@ -8,8 +8,14 @@ import java.util.ArrayList;
 public class FutureViewModle {
     private String future_name;
     private Long future_id;
-    private float rate;
-    private float have;
+
+    public FutureViewModle() {
+    }
+
+    public FutureViewModle(String future_name, Long future_id) {
+        this.future_name = future_name;
+        this.future_id = future_id;
+    }
 
     public String getFuture_name() {
         return future_name;
@@ -27,19 +33,5 @@ public class FutureViewModle {
         this.future_id = future_id;
     }
 
-    public float getRate() {
-        return rate;
-    }
 
-    public void setRate(float rate) {
-        this.rate = rate;
-    }
-
-    public float getHave() {
-        return have;
-    }
-
-    public void setHave(float have) {
-        this.have = have;
-    }
 }

@@ -53,16 +53,14 @@ public class UserController {
 
 
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
-    public ProfileViewModel profile(@RequestParam(name = "id") String userId) throws SQLException {
-        Long LUserId = Long.parseLong(userId);
-        User user = userRepository.findById(LUserId);
-        ProfileViewModel profileViewModel = new ProfileViewModel();
-        ArrayList<FutureDescriptionViewModel> userFutures = userRepository.findUserFuture(LUserId);
-        profileViewModel.setId(LUserId);
+    public ProfileViewModel profile(@RequestParam(name = "id") String user_id) throws SQLException {
+        Long userId = Long.parseLong(user_id);
+        User user = userRepository.findById(userId);
+
+        ProfileViewModel profileViewModel= userRepository.contractInfor(userId);
         profileViewModel.setName(user.getName());
+        profileViewModel.setCount_id(user_id);
         profileViewModel.setLeft_money(user.getFund());
-        profileViewModel.setCount_id(user.getIdentify());
-        profileViewModel.setMy_future(userFutures);
         return profileViewModel;
     }
 

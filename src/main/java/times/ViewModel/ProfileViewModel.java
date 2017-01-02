@@ -13,7 +13,6 @@ public class ProfileViewModel {
     private float bonus;
     private BigDecimal amount;
     private BigDecimal left_money;
-
     public ProfileViewModel(Long id, String name, String count_id, float bonus, BigDecimal amount, BigDecimal left_money, ArrayList<FutureDescriptionViewModel> my_future) {
         this.id = id;
         this.name = name;

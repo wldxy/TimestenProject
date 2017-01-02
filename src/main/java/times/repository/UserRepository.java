@@ -1,22 +1,30 @@
 package times.repository;
 
+import com.sun.xml.internal.messaging.saaj.util.FinalArrayList;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.NUMBER;
+import times.ViewModel.BounsAmountView;
 import times.ViewModel.FutureDescriptionViewModel;
+import times.ViewModel.ProfileViewModel;
 import times.model.User;
 import times.util.DatabaseConnection;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ocean on 16-12-31.
  */
 public class UserRepository {
+
+
+    private static final String SELECT_USER_CONTRACT_INFOR = "{call SELECT_USER_CONTRACT_INFOR(?, ?, ?, ?)}";
 
     private static final String createUser = "{call CREATE_USER(?, ?, ?, ?, ?, ?)}";
 
@@ -37,9 +45,50 @@ public class UserRepository {
         callableStatement.registerOutParameter(6, OracleTypes.NUMBER);
         callableStatement.executeUpdate();
         int result = callableStatement.getInt(6);
-        System.out.println(result);
         connection.close();
     }
+
+//    public ProfileViewModel contractInfor(Long user_id) throws SQLException {
+//        ProfileViewModel profileViewModel = new ProfileViewModel();
+//        Connection connection = DatabaseConnection.getOracleConnection();
+//        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(TEST);
+//        callableStatement.registerOutParameter(1, OracleTypes.NUMBER);
+//        callableStatement.executeUpdate();
+//        return profileViewModel;
+//    }
+    public ProfileViewModel contractInfor(Long user_id) throws SQLException {
+        ProfileViewModel profileViewModel = new ProfileViewModel();
+        Connection connection = DatabaseConnection.getOracleConnection();
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(SELECT_USER_CONTRACT_INFOR);
+        callableStatement.setLong(1, user_id);
+        callableStatement.registerOutParameter(2, OracleTypes.NUMBER);
+        callableStatement.registerOutParameter(3, OracleTypes.NUMBER);
+        callableStatement.registerOutParameter(4, OracleTypes.CURSOR);
+
+        callableStatement.executeUpdate();
+        float bonus = callableStatement.getFloat(2);
+        float anount = callableStatement.getFloat(3);
+        ResultSet rs = callableStatement.getCursor(4);
+
+        ArrayList<FutureDescriptionViewModel> futureDescriptionViewModels = new ArrayList<FutureDescriptionViewModel>();
+        while (rs.next()) {
+            FutureDescriptionViewModel futureDescriptionViewModel = new FutureDescriptionViewModel();
+            Long futureId = rs.getLong(1);
+            String futureName = rs.getString(2);
+            int amount = rs.getInt(3);
+            futureDescriptionViewModel.setFuture_name(futureName);
+            futureDescriptionViewModel.setFuture_id(futureId);
+            futureDescriptionViewModel.setHave(amount);
+            futureDescriptionViewModels.add(futureDescriptionViewModel);
+        }
+        connection.close();
+        profileViewModel.setBonus(bonus);
+        BigDecimal bigDecimal = new BigDecimal(anount);
+        profileViewModel.setAmount(bigDecimal);
+        profileViewModel.setMy_future(futureDescriptionViewModels);
+        return profileViewModel;
+    }
+
 
     public User findByIdentify(String identify) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
@@ -99,8 +148,8 @@ public class UserRepository {
         ResultSet rs = callableStatement.getCursor(2);
         ArrayList<FutureDescriptionViewModel> userFutures = new ArrayList<FutureDescriptionViewModel>();
 
-        FutureDescriptionViewModel futureDescriptionViewModel  = new FutureDescriptionViewModel();
-        while (rs.next()){
+        FutureDescriptionViewModel futureDescriptionViewModel = new FutureDescriptionViewModel();
+        while (rs.next()) {
             Long future_id = rs.getLong(1);
             String future_name = rs.getString(2);
             futureDescriptionViewModel.setFuture_id(future_id);
