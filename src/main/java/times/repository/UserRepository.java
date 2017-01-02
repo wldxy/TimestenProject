@@ -1,6 +1,5 @@
 package times.repository;
 
-import com.sun.xml.internal.messaging.saaj.util.FinalArrayList;
 import oracle.jdbc.OracleCallableStatement;
 import oracle.jdbc.OracleTypes;
 import oracle.sql.NUMBER;
@@ -33,6 +32,10 @@ public class UserRepository {
     private static final String selectUserById = "{call select_User_By_Id(?, ?)}";
 
     private static final String selectUserFutures = "{call select_future_by_user_id(?, ?)}";
+
+    private static final String addUserAcount = "{call RECHARGE(?, ?, ?)}";
+
+    private static final String decUserAcount = "{call TRANSFER(?, ?, ?)}";
 
     public void save(User user) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
@@ -158,5 +161,42 @@ public class UserRepository {
         }
         connection.close();
         return userFutures;
+    }
+
+    public Boolean addMoney(Long userId, Float number) throws SQLException {
+        Connection connection = DatabaseConnection.getOracleConnection();
+
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(addUserAcount);
+        callableStatement.setLong(1, userId);
+        callableStatement.setFloat(2, number);
+        callableStatement.registerOutParameter(3, OracleTypes.INTEGER);
+
+        callableStatement.executeUpdate();
+        Integer flag = callableStatement.getInt(3);
+        connection.close();
+        if (flag > 0)
+            return true;
+        else
+            return false;
+
+//        return (Boolean) flag;
+    }
+
+    public Boolean desMoney(Long userId, Float number) throws SQLException {
+        Connection connection = DatabaseConnection.getOracleConnection();
+
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(decUserAcount);
+        callableStatement.setLong(1, userId);
+        callableStatement.setFloat(2, number);
+        callableStatement.registerOutParameter(3, OracleTypes.INTEGER);
+
+        callableStatement.executeUpdate();
+        Integer flag = callableStatement.getInt(3);
+        connection.close();
+        if (flag > 0)
+            return true;
+        else
+            return false;
+//        return flag;
     }
 }

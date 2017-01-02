@@ -9,6 +9,7 @@ import times.ViewModel.*;
 import times.model.User;
 import times.util.DatabaseConnection;
 
+
 import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
@@ -28,20 +29,35 @@ public class FutureRepository {
     private static final String buyFuture = "{call BUY(?, ?, ?, ?, ?)}";
     private static final String todayPrice = "{call SELECT_TODAY_PRICE_BY_ID(?, ?, ?, ?)}";
 
+    private static final String sellFuture = "{call SELL(?, ?, ?, ?, ?)}";
+
+    private UserRepository userRepository = new UserRepository();
+
     public int buy(Long futureId, Long userId, Integer number, String pwd, Float price) throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();
+
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            return 4;
+        }
+        if (!user.getPassword().equals(pwd)) {
+            return 4;
+        }
+
         OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(buyFuture);
         callableStatement.setLong(1, userId);
         callableStatement.setLong(2, futureId);
         callableStatement.setInt(3, number);
         callableStatement.setFloat(4, price);
         callableStatement.registerOutParameter(5, OracleTypes.NUMBER);
+
         callableStatement.executeUpdate();
         int result = callableStatement.getInt(5);
         System.out.println(result);
         connection.close();
         return result;
     }
+
 
     public YesterViewModel yesterday(Long future_id, Long user_id) throws SQLException {
         YesterViewModel yesterViewModel = new YesterViewModel();
@@ -111,6 +127,31 @@ public class FutureRepository {
         connection.close();
         return freshViewModel;
     }
+
+    public int sell(Long futureId, Long userId, Integer number, String pwd, Float price) throws SQLException {
+        Connection connection = DatabaseConnection.getOracleConnection();
+
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            return 4;
+        }
+        if (!user.getPassword().equals(pwd)) {
+            return 4;
+        }
+
+        OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(sellFuture);
+        callableStatement.setLong(1, userId);
+        callableStatement.setLong(2, futureId);
+        callableStatement.setInt(3, number);
+        callableStatement.setFloat(4, price);
+        callableStatement.registerOutParameter(5, OracleTypes.NUMBER);
+
+        callableStatement.executeUpdate();
+        int result = callableStatement.getInt(5);
+        connection.close();
+        return result;
+    }
+
     public FutureInfoViewModle getRate(Long future_id) throws SQLException {
         FutureInfoViewModle futureInfoViewModle = new FutureInfoViewModle();
         ArrayList<PackageViewModel> today_rate = new ArrayList<PackageViewModel>();

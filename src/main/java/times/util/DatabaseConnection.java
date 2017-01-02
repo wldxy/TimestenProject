@@ -12,6 +12,7 @@ public class DatabaseConnection {
     public static final String oracle_connection = "jdbc:oracle:thin:@10.60.42.203:1521:orcl";
     private static final String DB_USER = "tthr";
     private static final String DB_PASSWORD = "tthr";
+
     public static final String tt_driver = "com.timesten.jdbc.TimesTenDriver";
     public static final String tt_connection = "jdbc:timesten:direct";
 
@@ -32,6 +33,7 @@ public class DatabaseConnection {
 
     public static Connection getTimstenConnection() throws ClassNotFoundException, SQLException {
         Connection connection = null;
+
         Class.forName(tt_driver);
         connection = DriverManager.getConnection(tt_connection);
 
