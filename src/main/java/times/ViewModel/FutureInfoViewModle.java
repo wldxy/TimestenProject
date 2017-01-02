@@ -9,16 +9,42 @@ import java.util.ArrayList;
 public class FutureInfoViewModle {
     private Long id;
     private String name;
-    private ArrayList<BigDecimal> today_rate;
+    private ArrayList<PackageViewModel> packageViewModels = new ArrayList<PackageViewModel>();
+    private ArrayList<RateViewModle> rateViewModle = new ArrayList<RateViewModle>();
+
+    public FutureInfoViewModle(Long id, String name, ArrayList<PackageViewModel> packageViewModels, ArrayList<RateViewModle> rateViewModle) {
+        this.id = id;
+        this.name = name;
+        this.packageViewModels = packageViewModels;
+        this.rateViewModle = rateViewModle;
+    }
+
+    public ArrayList<RateViewModle> getRateViewModle() {
+        return rateViewModle;
+    }
+
+    public void setRateViewModle(ArrayList<RateViewModle> rateViewModle) {
+        this.rateViewModle = rateViewModle;
+    }
+
+    public FutureInfoViewModle(Long id, String name, ArrayList<PackageViewModel> packageViewModels) {
+        this.id = id;
+        this.name = name;
+        this.packageViewModels = packageViewModels;
+    }
+
+    public ArrayList<PackageViewModel> getPackageViewModels() {
+        return packageViewModels;
+    }
+
+    public void setPackageViewModels(ArrayList<PackageViewModel> packageViewModels) {
+        this.packageViewModels = packageViewModels;
+    }
 
     public FutureInfoViewModle() {
     }
 
-    public FutureInfoViewModle(Long id, String name, ArrayList<BigDecimal> today_rate) {
-        this.id = id;
-        this.name = name;
-        this.today_rate = today_rate;
-    }
+
 
     public Long getId() {
         return id;
@@ -36,11 +62,5 @@ public class FutureInfoViewModle {
         this.name = name;
     }
 
-    public ArrayList<BigDecimal> getToday_rate() {
-        return today_rate;
-    }
 
-    public void setToday_rate(ArrayList<BigDecimal> today_rate) {
-        this.today_rate = today_rate;
-    }
 }
