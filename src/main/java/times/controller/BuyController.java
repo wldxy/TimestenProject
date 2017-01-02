@@ -11,7 +11,6 @@ import java.sql.SQLException;
  * Created by 13987 on 2017/1/2.
  */
 @RestController
-@RequestMapping("/buy")
 public class BuyController {
     private FutureRepository futureRepository = new FutureRepository();
     private UserRepository userRepository = new UserRepository();
@@ -27,5 +26,14 @@ public class BuyController {
         return result;
     }
 
-
+    @RequestMapping(value = "/sell", method = RequestMethod.POST)
+    public int sellFuture(@RequestBody BuyViewModel buyViewModel) throws SQLException {
+        Long futureId = buyViewModel.getF_Id();
+        Long userId = buyViewModel.getU_Id();
+        Integer number = buyViewModel.getNumber();
+        Float price = buyViewModel.getPrice();
+        String pwd = buyViewModel.getPwd();
+        int result = futureRepository.sell(futureId, userId, number, pwd, price);
+        return result;
+    }
 }
