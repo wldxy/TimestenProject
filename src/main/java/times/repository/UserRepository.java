@@ -97,6 +97,8 @@ public class UserRepository {
             futureDescriptionViewModel.setFuture_name(futureName);
             futureDescriptionViewModel.setFuture_id(futureId);
             futureDescriptionViewModel.setHave(amount);
+
+
             futureDescriptionViewModels.add(futureDescriptionViewModel);
         }
         connection.close();

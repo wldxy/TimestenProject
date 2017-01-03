@@ -15,6 +15,7 @@ public class BuyController {
     private FutureRepository futureRepository = new FutureRepository();
     private UserRepository userRepository = new UserRepository();
 
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/buy", method = RequestMethod.POST)
     public int profile(@RequestBody BuyViewModel buyViewModel) throws SQLException {
         Long futureId = buyViewModel.getF_Id();
@@ -26,6 +27,7 @@ public class BuyController {
         return result;
     }
 
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/sell", method = RequestMethod.POST)
     public int sellFuture(@RequestBody BuyViewModel buyViewModel) throws SQLException {
         Long futureId = buyViewModel.getF_Id();

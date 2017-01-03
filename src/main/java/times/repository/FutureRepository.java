@@ -38,10 +38,10 @@ public class FutureRepository {
 
         User user = userRepository.findById(userId);
         if (user == null) {
-            return 4;
+            return 5;
         }
-        if (!user.getPassword().equals(pwd)) {
-            return 4;
+        if (!user.getPassword().trim().equals(pwd)) {
+            return 5;
         }
 
         OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(buyFuture);
@@ -88,6 +88,7 @@ public class FutureRepository {
         yesterViewModel.setHave(callableStatement.getInt(4));
         yesterViewModel.setUserId(user_id);
         yesterViewModel.setRate(rate);
+        connection.close();
         return yesterViewModel;
 
     }
@@ -133,10 +134,10 @@ public class FutureRepository {
 
         User user = userRepository.findById(userId);
         if (user == null) {
-            return 4;
+            return 5;
         }
-        if (!user.getPassword().equals(pwd)) {
-            return 4;
+        if (!user.getPassword().trim().equals(pwd)) {
+            return 5;
         }
 
         OracleCallableStatement callableStatement = (OracleCallableStatement) connection.prepareCall(sellFuture);
