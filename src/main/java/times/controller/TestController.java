@@ -1,5 +1,6 @@
 package times.controller;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import times.util.DatabaseConnection;
@@ -12,7 +13,7 @@ import java.sql.SQLException;
  */
 @RestController
 public class TestController {
-
+    @CrossOrigin(origins = "*")
     @RequestMapping("/test")
     public void test() throws SQLException {
         Connection connection = DatabaseConnection.getOracleConnection();

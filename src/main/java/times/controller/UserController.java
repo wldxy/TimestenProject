@@ -1,9 +1,6 @@
 package times.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import times.ViewModel.FutureDescriptionViewModel;
 import times.ViewModel.LoginViewMoldel;
 import times.ViewModel.ProfileViewModel;
@@ -22,6 +19,7 @@ public class UserController {
 
     UserRepository userRepository = new UserRepository();
 
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public LoginViewMoldel login(@RequestParam(name = "id") String identity,
                                  @RequestParam(name = "pwd") String password) throws SQLException {
@@ -37,12 +35,13 @@ public class UserController {
         return loginViewMoldel;
     }
 
+    @CrossOrigin(origins = "*")
     @RequestMapping("/add")
     public boolean add(@RequestParam(name = "identify") String identify,
-                    @RequestParam(name = "password") String password,
-                    @RequestParam(name = "sex") Boolean sex,
-                    @RequestParam(name = "name") String name,
-                    @RequestParam(name = "tel") String tel) throws SQLException {
+                       @RequestParam(name = "password") String password,
+                       @RequestParam(name = "sex") Boolean sex,
+                       @RequestParam(name = "name") String name,
+                       @RequestParam(name = "tel") String tel) throws SQLException {
         User user = new User();
         user.setName(name);
         String str = "男";
@@ -56,13 +55,12 @@ public class UserController {
         try {
             System.out.println(userRepository.save(user));
             return true;
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             return false;
         }
     }
 
-
+    @CrossOrigin(origins = "*")
     @RequestMapping(value = "/profile", method = RequestMethod.POST)
     public ProfileViewModel profile(@RequestParam(name = "id") String user_id) throws SQLException {
         Long userId = Long.parseLong(user_id);
